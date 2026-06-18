@@ -41,12 +41,14 @@ export default function RootLayout({
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
         >
+          {/* Orbs — the radial gradients are already soft, so a small blur is
+              enough. Large blur radii (120px+) are very costly to paint. */}
           {/* Orb 1 — top-right, brand violet */}
-          <div className="bg-orb-1 absolute -top-52 -right-32 h-[760px] w-[760px] rounded-full blur-[120px] animate-float-y" />
+          <div className="bg-orb-1 absolute -top-52 -right-32 h-[760px] w-[760px] rounded-full blur-[56px] animate-float-y" />
           {/* Orb 2 — bottom-left, brand blue */}
-          <div className="bg-orb-2 absolute -bottom-48 -left-32 h-[640px] w-[640px] rounded-full blur-[110px] animate-float-y-slow" />
+          <div className="bg-orb-2 absolute -bottom-48 -left-32 h-[640px] w-[640px] rounded-full blur-[52px] animate-float-y-slow" />
           {/* Orb 3 — center, purple accent */}
-          <div className="bg-orb-3 absolute top-[38%] left-[42%] h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px] animate-float-xy" />
+          <div className="bg-orb-3 absolute top-[38%] left-[42%] h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[48px] animate-float-xy" />
           {/* Mesh grid */}
           <div className="absolute inset-0 mesh-grid" />
         </div>
