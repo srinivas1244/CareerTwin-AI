@@ -1,0 +1,58 @@
+# Render Blueprint — deploys the CareerTwin AI FastAPI backend.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Usage: in the Render dashboard → New → Blueprint → connect this repo.
+# Render reads this file, creates the service, and prompts for the secret
+# env vars marked `sync: false`. Fill those in (Supabase keys, Groq key, and
+# FRONTEND_ORIGIN = your daeployed frontend URL).
+
+services:
+  - type: web
+    name: careertwin-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Pin the Python version (matches local 3.13). Adjust if Render lacks it.
+      - key: PYTHON_VERSION
+        value: "3.13.4"
+
+      # ---- Supabase (set in the Render dashboard) ----
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: resumes
+
+      # ---- Groq (server-side only) ----
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_PRIMARY_MODEL
+        value: llama-3.3-70b-versatile
+      - key: GROQ_FALLBACK_MODEL
+        value: llama-3.1-8b-instant
+
+      # ---- GitHub (optional: raises public REST API rate limits) ----
+      - key: GITHUB_TOKEN
+        sync: false
+
+      # ---- CORS / app ----
+      # FRONTEND_ORIGIN = your production frontend URL, e.g.
+      #   https://careertwin.vercel.app  (comma-separate to allow several)
+      - key: FRONTEND_ORIGIN
+        sync: false
+      # Optional: allow all Vercel preview deploys, e.g.
+      #   https://.*\.vercel\.app
+      - key: FRONTEND_ORIGIN_REGEX
+        sync: false
+      - key: MAX_RESUME_MB
+        value: "5"
