@@ -23,7 +23,6 @@ import type {
 import { Navbar } from "@/components/Navbar";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ConfigBanner } from "@/components/ConfigBanner";
-import { PageScene } from "@/components/PageScene";
 import { useSession } from "@/lib/useSession";
 import { ChatWidget } from "@/components/ChatWidget";
 import { Button } from "@/components/ui/button";
@@ -456,7 +455,6 @@ function DashboardSkeleton() {
 export default function DashboardPage() {
   return (
     <AuthGuard>
-      <PageScene />
       <ConfigBanner />
       <Navbar />
       <DashboardInner />
