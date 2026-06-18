@@ -4,10 +4,6 @@
 
 CareerTwin AI creates a personalized **Digital Career Twin** from a user's resume and GitHub profile, providing hiring-readiness scoring, skill validation, project gap analysis, career simulation, personalized roadmaps, and contextual AI career guidance.
 
-> 📦 **Deploying?** See **[DEPLOYMENT.md](DEPLOYMENT.md)** — full Render (backend) + Vercel (frontend) walkthrough.
-
----
-
 ## 📖 Overview
 
 CareerTwin AI helps users understand:

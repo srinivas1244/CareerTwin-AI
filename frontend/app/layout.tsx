@@ -39,7 +39,7 @@ export default function RootLayout({
         {/* ── Global animated background layer ──────────────────────── */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+          className="pointer-events-none fixed inset-0 -z-10 overflow-hidden transform-gpu [contain:layout_paint]"
         >
           {/* Orbs — the radial gradients are already soft, so a small blur is
               enough. Large blur radii (120px+) are very costly to paint. */}

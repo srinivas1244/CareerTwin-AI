@@ -13,15 +13,17 @@
   --brand-2: #4f8cff;
   --panel: #0c0d12;
 
-  /* surfaces */
-  --surface-bg: rgba(255, 255, 255, 0.028);
+  /* surfaces — mostly opaque so cards don't need a (scroll-expensive)
+     backdrop-filter; the ambient scene still shows softly through the small
+     remaining transparency. */
+  --surface-bg: rgba(19, 20, 28, 0.88);
   --surface-border: rgba(255, 255, 255, 0.07);
-  --surface-hover-bg: rgba(255, 255, 255, 0.042);
+  --surface-hover-bg: rgba(26, 27, 37, 0.92);
   --surface-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
     0 20px 44px -24px rgba(0, 0, 0, 0.65);
-  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(19, 20, 28, 0.86);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-hover-bg: rgba(255, 255, 255, 0.07);
+  --glass-hover-bg: rgba(26, 27, 37, 0.92);
   --field-bg: rgba(255, 255, 255, 0.05);
   --field-border: rgba(255, 255, 255, 0.10);
   --mesh-line: rgba(255, 255, 255, 0.022);
@@ -49,14 +51,14 @@
   --brand-2: #3b7bff;
   --panel: #ffffff;
 
-  --surface-bg: rgba(255, 255, 255, 0.78);
+  --surface-bg: rgba(255, 255, 255, 0.93);
   --surface-border: rgba(23, 23, 48, 0.08);
-  --surface-hover-bg: rgba(255, 255, 255, 0.95);
+  --surface-hover-bg: rgba(255, 255, 255, 0.98);
   --surface-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
     0 18px 40px -24px rgba(30, 30, 70, 0.22);
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(23, 23, 48, 0.09);
-  --glass-hover-bg: rgba(255, 255, 255, 0.92);
+  --glass-hover-bg: rgba(255, 255, 255, 0.98);
   --field-bg: rgba(23, 23, 48, 0.035);
   --field-border: rgba(23, 23, 48, 0.16);
   --mesh-line: rgba(23, 23, 48, 0.04);
@@ -190,8 +192,6 @@ body {
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(7px);
-  backdrop-filter: blur(7px);
 }
 .glass-hover {
   transition: border-color 0.22s ease, background 0.22s ease,
@@ -248,8 +248,6 @@ body {
   background: var(--surface-bg);
   border: 1px solid var(--surface-border);
   box-shadow: var(--surface-shadow);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
 }
 .surface-hover {
   transition: border-color 0.25s ease, background 0.25s ease,

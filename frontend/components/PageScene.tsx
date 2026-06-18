@@ -9,7 +9,7 @@ export function PageScene() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden transform-gpu [contain:layout_paint]"
     >
       <div className="absolute bottom-0 left-1/2 w-full max-w-6xl -translate-x-1/2 opacity-[0.78]">
         <WorkspaceScene />
