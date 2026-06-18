@@ -54,6 +54,9 @@ Unlike traditional resume analyzers, CareerTwin combines **deterministic scoring
 
 ---
 
+# Live 
+https://career-twin-ai-chi.vercel.app/
+
 # 📂 Project Structure
 
 ```text
