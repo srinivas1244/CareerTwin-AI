@@ -24,21 +24,21 @@ Unlike traditional resume analyzers, CareerTwin combines **deterministic scoring
 
 # ✨ Features
 
-## 🧠 Career Twin Generation
+ 🧠 Career Twin Generation
 
-## 📊 Hiring Readiness Score
+ 📊 Hiring Readiness Score
 
-## 🔍 Resume Reality Check
+ 🔍 Resume Reality Check
 
-## 🚀 Project Gap Detector
+ 🚀 Project Gap Detector
 
-## 📈 Career Simulator
+ 📈 Career Simulator
 
-## 🛣️ AI Career Roadmap
+ 🛣️ AI Career Roadmap
 
-## 💬 Career Twin Chat
+ 💬 Career Twin Chat
 
-## 🎯 Personalized Career Insights
+ 🎯 Personalized Career Insights
 
 
 # ⚙️ Tech Stack
