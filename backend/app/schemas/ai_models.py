@@ -34,15 +34,31 @@ class EducationItem(BaseModel):
     year: str | None = None
 
 
+class ContactInfo(BaseModel):
+    full_name: str | None = None
+    email: str | None = None
+    phone: str | None = None
+
+
+class LinksInfo(BaseModel):
+    linkedin: str | None = None
+    github: str | None = None
+    portfolio: str | None = None
+    other: list[str] = Field(default_factory=list)
+
+
 class TwinExtraction(BaseModel):
     """Career Twin extracted from resume text + GitHub summary."""
 
+    contact: ContactInfo = Field(default_factory=ContactInfo)
+    links: LinksInfo = Field(default_factory=LinksInfo)
     skills: list[str] = Field(default_factory=list)
     technologies: list[str] = Field(default_factory=list)
     certifications: list[CertificationItem] = Field(default_factory=list)
     projects: list[ProjectItem] = Field(default_factory=list)
     experience: list[ExperienceItem] = Field(default_factory=list)
     education: list[EducationItem] = Field(default_factory=list)
+    achievements: list[str] = Field(default_factory=list)
     inferred_role: str = ""
     career_goal: str | None = None
     summary: str | None = None

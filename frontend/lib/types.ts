@@ -30,13 +30,29 @@ export interface RoleOption {
   label: string;
 }
 
+export interface ContactInfo {
+  full_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+}
+
+export interface LinksInfo {
+  linkedin?: string | null;
+  github?: string | null;
+  portfolio?: string | null;
+  other?: string[];
+}
+
 export interface CareerProfile {
+  contact: ContactInfo;
+  links: LinksInfo;
   skills: string[];
   technologies: string[];
   certifications: CertificationItem[];
   projects: ProjectItem[];
   experience: ExperienceItem[];
   education: EducationItem[];
+  achievements: string[];
   inferred_role?: string | null;
   target_role?: string | null;
   target_role_label?: string | null;

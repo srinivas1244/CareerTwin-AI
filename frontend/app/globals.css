@@ -14,7 +14,7 @@
   --panel: #0c0d12;
 
   /* surfaces — mostly opaque so cards don't need a (scroll-expensive)
-     backdrop-filter; the ambient scene still shows softly through the small
+    backdrop-filter; the ambient scene still shows softly through the small
      remaining transparency. */
   --surface-bg: rgba(19, 20, 28, 0.88);
   --surface-border: rgba(255, 255, 255, 0.07);

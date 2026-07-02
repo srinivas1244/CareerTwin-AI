@@ -5,7 +5,6 @@ import type {
   HiringScore,
   CategoryScore,
   RealityCheck,
-  Simulation,
   ProjectGap,
   CareerProfile,
 } from "./types";
@@ -64,60 +63,6 @@ export function weaknesses(score?: HiringScore | null): CategoryScore[] {
   return [...(score?.breakdown ?? [])]
     .filter((c) => c.score < 60)
     .sort((a, b) => a.score - b.score);
-}
-
-export interface Insight {
-  text: string;
-  tone: Tone;
-}
-
-/** Conversational, data-backed insight cards. */
-export function deriveInsights(
-  score?: HiringScore | null,
-  reality?: RealityCheck | null,
-  simulation?: Simulation | null,
-  roleLabel?: string | null
-): Insight[] {
-  const out: Insight[] = [];
-  const role = roleLabel || "your target role";
-
-  // 1. Biggest lever (from the deterministic simulator)
-  const topLever = simulation?.scenarios?.find((s) => s.delta > 0);
-  if (topLever) {
-    out.push({
-      tone: "brand",
-      text: `${topLever.label} could raise your Hiring Score by +${topLever.delta} — your single highest-impact move right now.`,
-    });
-  }
-
-  // 2. Weakest signal (from the score breakdown)
-  const weakest = [...(score?.breakdown ?? [])].sort((a, b) => a.score - b.score)[0];
-  if (weakest) {
-    out.push({
-      tone: weakest.score < 50 ? "red" : "amber",
-      text: `${weakest.label} is currently your weakest signal at ${weakest.score}/100 — improving it moves the needle most for ${role}.`,
-    });
-  }
-
-  // 3. Credibility gap (from the reality check)
-  const missing = reality?.counts?.["Missing"] ?? 0;
-  if (reality && missing > 0) {
-    out.push({
-      tone: "amber",
-      text: `${missing} of your claimed skills have no GitHub evidence yet — backing even a few of them up lifts your credibility.`,
-    });
-  }
-
-  // 4. Strongest asset (positive reinforcement)
-  const strongest = [...(score?.breakdown ?? [])].sort((a, b) => b.score - a.score)[0];
-  if (strongest && strongest.score >= 70 && out.length < 3) {
-    out.push({
-      tone: "emerald",
-      text: `Your ${strongest.label.toLowerCase()} (${strongest.score}/100) is your strongest asset for ${role}.`,
-    });
-  }
-
-  return out.slice(0, 3);
 }
 
 export interface RecruiterView {

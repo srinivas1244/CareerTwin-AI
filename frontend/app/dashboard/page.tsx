@@ -32,14 +32,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { deriveInsights } from "@/lib/insights";
 
 import { CareerHero } from "@/components/dashboard/CareerHero";
-import { InsightPanel } from "@/components/dashboard/InsightPanel";
 import { HiringScorePanel } from "@/components/dashboard/HiringScorePanel";
 import { NextBestActions } from "@/components/dashboard/NextBestActions";
-import { CareerTimeline } from "@/components/dashboard/CareerTimeline";
-import { RealityPanel } from "@/components/dashboard/RealityPanel";
 import { ProjectGapsPanel } from "@/components/dashboard/ProjectGapsPanel";
 import { RoadmapPanel } from "@/components/dashboard/RoadmapPanel";
 import { TwinOverview } from "@/components/dashboard/TwinOverview";
@@ -60,7 +56,6 @@ function DashboardInner() {
   const [error, setError] = useState<string | null>(null);
 
   const [computing, setComputing] = useState(false);
-  const [checkingReality, setCheckingReality] = useState(false);
   const [detectingGaps, setDetectingGaps] = useState(false);
   const [simulating, setSimulating] = useState(false);
   const [buildingRoadmap, setBuildingRoadmap] = useState(false);
@@ -120,13 +115,10 @@ function DashboardInner() {
   }
 
   async function runRealityCheck() {
-    setCheckingReality(true);
     try {
       setReality(await apiPost<RealityCheck>("/api/reality-check"));
     } catch {
       /* needs GitHub */
-    } finally {
-      setCheckingReality(false);
     }
   }
 
@@ -283,7 +275,6 @@ function DashboardInner() {
     score?.explanation?.summary ||
     profile?.summary ||
     "Generate your analyses below to see exactly where you stand — and what to do next.";
-  const insights = deriveInsights(score, reality, simulation, roleLabel);
   const missingSkills =
     roadmap?.missing_skills?.length
       ? roadmap.missing_skills
@@ -309,7 +300,7 @@ function DashboardInner() {
         generatingRoadmap={buildingRoadmap}
       />
 
-      <InsightPanel insights={insights} />
+      {profile && <TwinOverview profile={profile} github={github} />}
 
       <HiringScorePanel
         score={score}
@@ -318,17 +309,12 @@ function DashboardInner() {
         computing={computing}
       />
 
-      {profile && <TwinOverview profile={profile} github={github} />}
-
       <NextBestActions
         simulation={simulation}
+        roleLabel={roleLabel}
         onGenerate={runSimulation}
         generating={simulating}
       />
-
-      <CareerTimeline simulation={simulation} roleLabel={roleLabel} />
-
-      <RealityPanel reality={reality} onRun={runRealityCheck} running={checkingReality} />
 
       <ProjectGapsPanel
         gaps={gaps}

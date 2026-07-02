@@ -11,6 +11,14 @@ import {
   Code2,
   ChevronRight,
   Layers,
+  User,
+  Mail,
+  Phone,
+  Link2,
+  Briefcase,
+  GraduationCap,
+  Trophy,
+  ExternalLink,
 } from "lucide-react";
 import { Section } from "./Section";
 import { Drawer } from "@/components/ui/drawer";
@@ -76,6 +84,39 @@ function Stat({
   );
 }
 
+function ContactRow({ icon: Icon, value }: { icon: typeof User; value: string }) {
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-muted" />
+      <span className="truncate text-foreground/90">{value}</span>
+    </div>
+  );
+}
+
+function LinkRow({
+  icon: Icon,
+  label,
+  href,
+}: {
+  icon: typeof Link2;
+  label: string;
+  href: string;
+}) {
+  const url = href.startsWith("http") ? href : `https://${href}`;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="flex items-center gap-2 truncate text-sm text-foreground/90 transition hover:text-brand"
+    >
+      <Icon className="h-3.5 w-3.5 shrink-0 text-muted" />
+      <span className="truncate">{label}</span>
+      <ExternalLink className="h-3 w-3 shrink-0 text-muted" />
+    </a>
+  );
+}
+
 function DrawerContent({
   profile,
   github,
@@ -91,8 +132,106 @@ function DrawerContent({
     .sort((a, b) => b.stars - a.stars)
     .slice(0, 5);
 
+  const { contact, links } = profile;
+  const hasContact = contact.full_name || contact.email || contact.phone;
+  const hasLinks = links.linkedin || links.github || links.portfolio || links.other?.length;
+
   return (
     <div className="space-y-3">
+      {/* Primary Contact */}
+      <DrawerPanel icon={User} title="Primary Contact">
+        {hasContact ? (
+          <div className="space-y-2">
+            {contact.full_name && <ContactRow icon={User} value={contact.full_name} />}
+            {contact.email && <ContactRow icon={Mail} value={contact.email} />}
+            {contact.phone && <ContactRow icon={Phone} value={contact.phone} />}
+          </div>
+        ) : (
+          <p className="text-sm text-muted">No contact details extracted.</p>
+        )}
+      </DrawerPanel>
+
+      {/* Profiles & Links */}
+      <DrawerPanel icon={Link2} title="Profiles & Links">
+        {hasLinks ? (
+          <div className="space-y-2">
+            {links.linkedin && <LinkRow icon={Link2} label="LinkedIn" href={links.linkedin} />}
+            {links.github && <LinkRow icon={GitBranch} label="GitHub" href={links.github} />}
+            {links.portfolio && (
+              <LinkRow icon={Link2} label="Portfolio" href={links.portfolio} />
+            )}
+            {(links.other ?? []).map((l, i) => (
+              <LinkRow key={i} icon={Link2} label={l} href={l} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted">No profile links extracted.</p>
+        )}
+      </DrawerPanel>
+
+      {/* Work Experience */}
+      <DrawerPanel icon={Briefcase} title="Work Experience" count={profile.experience.length}>
+        {profile.experience.length ? (
+          <ul className="space-y-2">
+            {profile.experience.map((e, i) => (
+              <li
+                key={i}
+                className="rounded-lg border border-white/5 bg-white/5 px-3 py-2"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <p className="text-sm text-foreground/90">{e.title || "Role"}</p>
+                  {e.duration && <p className="text-xs text-muted">{e.duration}</p>}
+                </div>
+                {e.company && <p className="text-xs text-muted">{e.company}</p>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted">No work experience extracted.</p>
+        )}
+      </DrawerPanel>
+
+      {/* Education */}
+      <DrawerPanel icon={GraduationCap} title="Education" count={profile.education.length}>
+        {profile.education.length ? (
+          <ul className="space-y-2">
+            {profile.education.map((e, i) => (
+              <li
+                key={i}
+                className="rounded-lg border border-white/5 bg-white/5 px-3 py-2"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <p className="text-sm text-foreground/90">{e.degree || "Degree"}</p>
+                  {e.year && <p className="text-xs text-muted">{e.year}</p>}
+                </div>
+                {e.institution && <p className="text-xs text-muted">{e.institution}</p>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted">No education extracted.</p>
+        )}
+      </DrawerPanel>
+
+      {/* Achievements & Activities */}
+      <DrawerPanel
+        icon={Trophy}
+        title="Achievements & Activities"
+        count={profile.achievements.length}
+      >
+        {profile.achievements.length ? (
+          <ul className="list-disc space-y-1 pl-4">
+            {profile.achievements.map((a, i) => (
+              <li key={i} className="text-sm text-foreground/90">
+                {a}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted">No achievements or activities extracted.</p>
+        )}
+      </DrawerPanel>
+
       {/* GitHub */}
       <DrawerPanel icon={GitBranch} title="GitHub">
         {github ? (
@@ -283,6 +422,29 @@ export function TwinOverview({
         subtitle="What we extracted from your resume and GitHub."
       >
         <div className="surface surface-hover rounded-2xl p-5 sm:p-6">
+          {/* Identity */}
+          {(profile.contact.full_name || profile.contact.email || profile.contact.phone) && (
+            <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              {profile.contact.full_name && (
+                <span className="text-base font-semibold text-foreground">
+                  {profile.contact.full_name}
+                </span>
+              )}
+              {profile.contact.email && (
+                <span className="flex items-center gap-1.5 text-sm text-muted">
+                  <Mail className="h-3.5 w-3.5" />
+                  {profile.contact.email}
+                </span>
+              )}
+              {profile.contact.phone && (
+                <span className="flex items-center gap-1.5 text-sm text-muted">
+                  <Phone className="h-3.5 w-3.5" />
+                  {profile.contact.phone}
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Summary text */}
           {summary && (
             <p className="mb-4 max-w-2xl text-sm leading-relaxed text-foreground/80">

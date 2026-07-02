@@ -1,28 +1,44 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Loader2, Zap, CheckCircle2 } from "lucide-react";
+import { Loader2, Zap, CheckCircle2, Flag } from "lucide-react";
 import { Section } from "./Section";
 import { Button } from "@/components/ui/button";
 import { askCareerTwin } from "@/lib/chatBus";
+import { cn } from "@/lib/utils";
 import type { Simulation } from "@/lib/types";
+
+function ScoreChip({ value, delta }: { value: number; delta?: number }) {
+  return (
+    <span className="inline-flex shrink-0 items-baseline gap-1 text-sm tabular-nums">
+      <span className="font-semibold text-foreground">{value}</span>
+      {typeof delta === "number" && delta > 0 && (
+        <span className="text-xs text-emerald-300">+{delta}</span>
+      )}
+    </span>
+  );
+}
 
 export function NextBestActions({
   simulation,
+  roleLabel,
   onGenerate,
   generating,
 }: {
   simulation: Simulation | null;
+  roleLabel?: string | null;
   onGenerate: () => void;
   generating: boolean;
 }) {
-  const actions = (simulation?.scenarios ?? []).filter((s) => s.delta > 0).slice(0, 3);
+  const steps = simulation?.roadmap ?? [];
+  const final = simulation?.roadmap_final_score ?? 0;
+  const ready = final >= 85;
 
   return (
     <Section
       eyebrow="Do this next"
       title="Next Best Actions"
-      subtitle="The highest-impact moves for your Hiring Score, ranked."
+      subtitle="Your ranked path to a role-ready Hiring Score."
     >
       {!simulation ? (
         <div className="surface flex flex-col items-center gap-4 rounded-2xl p-10 text-center">
@@ -38,39 +54,54 @@ export function NextBestActions({
             Generate action plan
           </Button>
         </div>
-      ) : actions.length ? (
-        <div className="grid gap-3 md:grid-cols-3">
-          {actions.map((a, i) => (
+      ) : steps.length ? (
+        <div className="surface divide-y divide-white/6 rounded-2xl">
+          {steps.map((step, i) => (
             <motion.button
               key={i}
               type="button"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06, duration: 0.3 }}
+              transition={{ delay: i * 0.05, duration: 0.25 }}
               onClick={() =>
                 askCareerTwin(
-                  `How do I "${a.label}" for my target role, and how much will it raise my Hiring Score?`
+                  `How do I "${step.label}" for my target role, and how much will it raise my Hiring Score?`
                 )
               }
-              className="surface surface-hover group flex flex-col rounded-2xl p-5 text-left"
+              className="group flex w-full items-center gap-3 px-5 py-3.5 text-left transition hover:bg-white/4"
             >
-              <div className="mb-4 flex items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-white">
-                  {i + 1}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
-                  <ArrowUpRight className="h-3 w-3" /> +{a.delta}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-foreground">{a.label}</p>
-              <p className="mt-1 text-xs text-muted">
-                Projected score {a.projected_score}/100
-              </p>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-brand opacity-70 transition group-hover:opacity-100">
-                Ask how <ArrowUpRight className="h-3 w-3" />
+              <span
+                className={cn(
+                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold",
+                  i === 0
+                    ? "bg-gradient-to-br from-brand to-brand-2 text-white"
+                    : "bg-white/8 text-muted"
+                )}
+              >
+                {i + 1}
               </span>
+              <span className="min-w-0 flex-1 truncate text-sm text-foreground/90">
+                {step.label}
+              </span>
+              <ScoreChip value={step.projected_score} delta={step.delta} />
             </motion.button>
           ))}
+
+          {/* Outcome */}
+          <div className="flex items-center gap-3 px-5 py-3.5">
+            <span
+              className={cn(
+                "grid h-6 w-6 shrink-0 place-items-center rounded-full",
+                ready ? "bg-emerald-400 text-black" : "bg-white/8 text-muted"
+              )}
+            >
+              <Flag className="h-3 w-3" />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+              {ready ? `${roleLabel || "Role"}-ready` : "Projected readiness"}
+            </span>
+            <ScoreChip value={final} />
+          </div>
         </div>
       ) : (
         <div className="surface flex items-center gap-3 rounded-2xl p-6 text-sm text-muted">

@@ -5,8 +5,10 @@ from pydantic import BaseModel, Field, field_validator
 
 from app.schemas.ai_models import (
     CertificationItem,
+    ContactInfo,
     EducationItem,
     ExperienceItem,
+    LinksInfo,
     ProjectItem,
     ScoreExplanation,
 )
@@ -65,12 +67,15 @@ class RoleOption(BaseModel):
 
 
 class CareerProfileResponse(BaseModel):
+    contact: ContactInfo = Field(default_factory=ContactInfo)
+    links: LinksInfo = Field(default_factory=LinksInfo)
     skills: list[str] = Field(default_factory=list)
     technologies: list[str] = Field(default_factory=list)
     certifications: list[CertificationItem] = Field(default_factory=list)
     projects: list[ProjectItem] = Field(default_factory=list)
     experience: list[ExperienceItem] = Field(default_factory=list)
     education: list[EducationItem] = Field(default_factory=list)
+    achievements: list[str] = Field(default_factory=list)
     inferred_role: str | None = None
     target_role: str | None = None  # curated role key
     target_role_label: str | None = None

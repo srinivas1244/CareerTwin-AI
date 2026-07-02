@@ -19,6 +19,10 @@ def twin_user_prompt(resume_text: str, github_summary: str) -> str:
     return (
         "Extract the Career Twin as JSON with exactly these keys:\n"
         '{\n'
+        '  "contact": {"full_name": string|null, "email": string|null, '
+        '"phone": string|null},\n'
+        '  "links": {"linkedin": string|null, "github": string|null, '
+        '"portfolio": string|null, "other": [string]},\n'
         '  "skills": [string],\n'
         '  "technologies": [string],\n'
         '  "certifications": [{"name": string, "issuer": string|null}],\n'
@@ -28,10 +32,25 @@ def twin_user_prompt(resume_text: str, github_summary: str) -> str:
         '"duration": string|null, "description": string|null}],\n'
         '  "education": [{"degree": string|null, "institution": string|null, '
         '"year": string|null}],\n'
+        '  "achievements": [string],  // awards, honors, publications, leadership, '
+        'extracurricular activities\n'
         '  "inferred_role": string,   // best-fit target role for this candidate\n'
         '  "career_goal": string|null,\n'
         '  "summary": string|null     // 1-2 sentence professional summary\n'
         "}\n\n"
+        "Only fill contact/links fields that literally appear in the resume text — "
+        "leave them null (or an empty list) rather than guessing. The candidate's "
+        "full name is usually the very first line of the resume. A "
+        "'[Detected hyperlinks]' block may be appended at the end of the resume "
+        "text with URLs the candidate embedded behind icons/links that aren't "
+        "otherwise visible as text — use those for the linkedin/github/portfolio "
+        "fields when they match, and put any leftover URLs in links.other.\n\n"
+        "For achievements, scan the ENTIRE resume, not just a section literally "
+        "titled 'Achievements' — also pull from sections titled Activities, "
+        "Awards, Honors, Extracurricular, Leadership, Hackathons, Competitions, "
+        "Volunteering, or bullet points elsewhere mentioning winning/placing in "
+        "a competition, hackathon, datathon, olympiad, or receiving a scholarship "
+        "or award. Each achievement should be one short standalone bullet.\n\n"
         f"For inferred_role, prefer one of these labels when it fits: {role_labels}.\n\n"
         "=== RESUME TEXT ===\n"
         f"{resume_text[:12000]}\n\n"

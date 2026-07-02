@@ -9,6 +9,7 @@ from app.repositories.resume_repo import ResumeRepository
 from app.services.ai.base import AIProvider
 from app.services.ai.prompts import TWIN_SYSTEM, twin_user_prompt
 from app.services.github_service import summary_from_record
+from app.services.resume_service import extract_contact_hints
 from app.schemas.ai_models import TwinExtraction
 
 
@@ -26,7 +27,7 @@ class CareerTwinService:
         self.github_repo = github_repo or GithubRepository()
         self.profile_repo = profile_repo or CareerProfileRepository()
 
-    def generate(self, user_id: str) -> dict:
+    def generate(self, user_id: str, user_email: str | None = None) -> dict:
         resume = self.resume_repo.get_latest(user_id)
         if not resume or not (resume.get("raw_text") or "").strip():
             raise ValidationFailed("Upload a resume before generating your Career Twin.")
@@ -43,13 +44,29 @@ class CareerTwinService:
         )
 
         target_role = match_role(extraction.inferred_role)
+        hints = extract_contact_hints(resume["raw_text"])
+        contact = extraction.contact.model_dump()
+        contact["full_name"] = contact.get("full_name") or hints["full_name"]
+        contact["email"] = contact.get("email") or hints["email"] or user_email
+        contact["phone"] = contact.get("phone") or hints["phone"]
+        links = extraction.links.model_dump()
+        links["linkedin"] = links.get("linkedin") or hints["linkedin"]
+        links["github"] = (
+            links.get("github")
+            or hints["github"]
+            or (f"https://github.com/{gh['username']}" if gh else None)
+        )
+        links["portfolio"] = links.get("portfolio") or hints["portfolio"]
         record = {
+            "contact": contact,
+            "links": links,
             "skills": extraction.skills,
             "technologies": extraction.technologies,
             "certifications": [c.model_dump() for c in extraction.certifications],
             "projects": [p.model_dump() for p in extraction.projects],
             "experience": [e.model_dump() for e in extraction.experience],
             "education": [e.model_dump() for e in extraction.education],
+            "achievements": extraction.achievements,
             "inferred_role": extraction.inferred_role,
             "target_role": target_role,
             "career_goal": extraction.career_goal,
@@ -68,16 +85,22 @@ class CareerTwinService:
         return updated
 
 
-def to_profile_response(record: dict) -> dict:
+def to_profile_response(record: dict, fallback_email: str | None = None) -> dict:
     """Shape a career_profiles row into the API response (adds role options/label)."""
     target_role = record.get("target_role") or match_role(record.get("inferred_role"))
+    contact = record.get("contact") or {}
+    if fallback_email and not contact.get("email"):
+        contact = {**contact, "email": fallback_email}
     return {
+        "contact": contact,
+        "links": record.get("links") or {},
         "skills": record.get("skills") or [],
         "technologies": record.get("technologies") or [],
         "certifications": record.get("certifications") or [],
         "projects": record.get("projects") or [],
         "experience": record.get("experience") or [],
         "education": record.get("education") or [],
+        "achievements": record.get("achievements") or [],
         "inferred_role": record.get("inferred_role"),
         "target_role": target_role,
         "target_role_label": label_for(target_role),

@@ -21,8 +21,8 @@ def generate_twin(
     user: CurrentUser = Depends(get_current_user),
     ai: AIProvider = Depends(ai_provider),
 ) -> CareerProfileResponse:
-    record = CareerTwinService(ai).generate(user.id)
-    return CareerProfileResponse(**to_profile_response(record))
+    record = CareerTwinService(ai).generate(user.id, user_email=user.email)
+    return CareerProfileResponse(**to_profile_response(record, fallback_email=user.email))
 
 
 @router.get("", response_model=CareerProfileResponse)
@@ -32,7 +32,7 @@ def get_twin(
     record = CareerTwinService().get(user.id)
     if not record:
         raise NotFoundError("No Career Twin generated yet.")
-    return CareerProfileResponse(**to_profile_response(record))
+    return CareerProfileResponse(**to_profile_response(record, fallback_email=user.email))
 
 
 @router.patch("/role", response_model=CareerProfileResponse)
