@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfigBanner } from "@/components/ConfigBanner";
 import { AuthShell } from "@/components/AuthShell";
+import { GoogleAuthButton } from "@/components/GoogleAuthButton";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -122,6 +123,14 @@ export default function SignupPage() {
             Create account
           </Button>
         </form>
+
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs text-muted">or</span>
+          <div className="h-px flex-1 bg-white/10" />
+        </div>
+
+        <GoogleAuthButton />
 
         <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{" "}
